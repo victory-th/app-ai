@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import GameLanding from './GameLanding';
+import SafePage from './SafePage';
 import PromotionSection from './PromotionSection';
 import LoadingScreen from './LoadingScreen';
 import SoundManager from './SoundManager';
@@ -40,17 +42,20 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black">
-      <SoundManager />
-      
-      {viewState === PageState.LOADING ? (
-        <LoadingScreen progress={progress} />
-      ) : (
-        <div className="animate-in fade-in duration-1000 w-full flex flex-col items-center">
-          <GameLanding isInteractive={true} />
-          <PromotionSection />
-        </div>
-      )}
+    <Router>
+      <div className="min-h-screen bg-black">
+        <SoundManager />
+        
+        {viewState === PageState.LOADING ? (
+          <LoadingScreen progress={progress} />
+        ) : (
+          <div className="animate-in fade-in duration-1000 w-full flex flex-col items-center">
+            <Routes>
+              <Route path="/" element={<><GameLanding isInteractive={true} /><PromotionSection /></>} />
+              <Route path="/safe" element={<SafePage />} />
+            </Routes>
+          </div>
+        )}
       
       <style>{`
         @keyframes fadeIn {
@@ -61,7 +66,8 @@ const App: React.FC = () => {
           animation: fadeIn 1.5s ease-out forwards;
         }
       `}</style>
-    </div>
+      </div>
+    </Router>
   );
 };
 
