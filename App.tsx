@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import GameLanding from './components/GameLanding';
-import PromotionSection from './components/PromotionSection';
-import LoadingScreen from './components/LoadingScreen';
-import SoundManager from './components/SoundManager';
+import GameLanding from './GameLanding';
+import PromotionSection from './PromotionSection';
+import LoadingScreen from './LoadingScreen';
+import SoundManager from './SoundManager';
 import { PageState } from './types';
 
 const App: React.FC = () => {
@@ -11,20 +11,32 @@ const App: React.FC = () => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(timer);
-          setTimeout(() => setViewState(PageState.PROMO), 1200);
-          return 100;
-        }
-        // Cinematic loading speed
-        const inc = Math.random() * (prev > 85 ? 2 : 12);
-        return Math.min(prev + inc, 100);
-      });
-    }, 120);
+    let timer: NodeJS.Timeout | null = null;
+    let timeoutId: NodeJS.Timeout | null = null;
 
-    return () => clearInterval(timer);
+    const startLoading = () => {
+      timer = setInterval(() => {
+        setProgress((prev) => {
+          const newProgress = prev >= 100 ? 100 : Math.min(prev + Math.random() * (prev > 85 ? 2 : 12), 100);
+          
+          // When progress reaches 100%, transition to PROMO after delay
+          if (newProgress >= 100 && timer) {
+            clearInterval(timer);
+            timer = null;
+            timeoutId = setTimeout(() => setViewState(PageState.PROMO), 1200);
+          }
+          
+          return newProgress;
+        });
+      }, 120);
+    };
+
+    startLoading();
+
+    return () => {
+      if (timer) clearInterval(timer);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, []);
 
   return (

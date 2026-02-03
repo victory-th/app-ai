@@ -18,8 +18,14 @@
       t.src=v;s=b.tagName[0];s.parentNode.insertBefore(t,s)}(window, document,'script',
       'https://connect.facebook.net/en_US/fbevents.js');
       
-      fbq('init', '2072787790188101'); 
-      fbq('track', 'PageView');
+      try {
+        if (window.fbq) {
+          fbq('init', '2072787790188101'); 
+          fbq('track', 'PageView');
+        }
+      } catch (e) {
+        console.log('Facebook Pixel initialization error:', e);
+      }
     </script>
 
     <script>

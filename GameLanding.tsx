@@ -18,7 +18,7 @@ const GameLanding: React.FC<GameLandingProps> = ({ isInteractive }) => {
       });
     }
     
-    const videoUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'; 
+    const videoUrl = 'https://youtu.be/dD9Q2fCpfrg'; 
     window.open(videoUrl, '_blank'); 
   };
 
