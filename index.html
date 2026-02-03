@@ -31,16 +31,19 @@
         }
 
         // ส่งข้อมูลไปที่ตาราง fb_pixel_events ใน Database
-        fetch('/api/track-pixel', { 
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            event_name: eventName,
-            payload: payload,
-            url: window.location.href,
-            timestamp: new Date().toISOString()
-          })
-        }).catch(err => console.log('CAPI Error:', err));
+        (function(){
+          var baseApi = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? '' : 'http://72.62.243.85:3001';
+          fetch(baseApi + '/api/track-pixel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              event_name: eventName,
+              payload: payload,
+              url: window.location.href,
+              timestamp: new Date().toISOString()
+            })
+          }).catch(err => console.log('CAPI Error:', err));
+        })();
       }
     </script>
     
