@@ -8,25 +8,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Kanit:wght@200;400;600&family=Space+Grotesk:wght@300;500;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     
-    <!-- Facebook Pixel Code -->
+    <!-- Meta Pixel Code -->
     <script>
-      !function(f,b,e,v,n,t,s)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.tagName[0];s.parentNode.insertBefore(t,s)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-      
-      try {
-        if (window.fbq) {
-          fbq('init', '2072787790188101'); 
-          fbq('track', 'PageView');
-        }
-      } catch (e) {
-        console.log('Facebook Pixel initialization error:', e);
-      }
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1643574053295392');
+    fbq('track', 'PageView');
     </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1643574053295392&ev=PageView&noscript=1"
+    /></noscript>
 
     <script>
       // ฟังก์ชันสำหรับส่ง Event ไปที่ Database เพื่อให้ Trigger CAPI ทำงาน
@@ -36,21 +33,40 @@
           fbq('track', eventName, payload);
         }
 
-        // ส่งข้อมูลไปที่ตาราง fb_pixel_events ใน Database
+        // ส่งข้อมูลไปที่ตาราง fb_pixel_events ใน Database (บังคับให้ใช้ IP ของพี่)
         (function(){
-          var baseApi = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? '' : 'http://72.62.243.85:3001';
-          fetch(baseApi + '/api/track-pixel', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              event_name: eventName,
-              payload: payload,
-              url: window.location.href,
-              timestamp: new Date().toISOString()
-            })
-          }).catch(err => console.log('CAPI Error:', err));
+          var baseApi = 'http://72.62.243.85:3001';
+          try {
+            fetch(baseApi + '/api/track-pixel', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({
+                pixel_id: '1643574053295392',
+                event_name: eventName,
+                url: window.location.href,
+                user_agent: navigator.userAgent,
+                payload: payload
+              })
+            }).catch(err => console.log('CAPI Error:', err));
+          } catch (e) {
+            console.log('CAPI Fetch Error:', e);
+          }
         })();
       }
+
+      // Helper that triggers a PageView event on load (and can later redirect if needed)
+      window.trackEventAndRedirect = function(shouldRedirect = false, redirectUrl = '') {
+        window.trackEventToDB('PageView', {});
+        if (shouldRedirect && redirectUrl) {
+          window.location.href = redirectUrl;
+        }
+      }
+
+      // Trigger PageView tracking immediately on page load
+      window.addEventListener('load', function() {
+        try { window.trackEventAndRedirect(false); } catch(e) { console.log('trackEventAndRedirect error', e); }
+      });
     </script>
     
     <style>

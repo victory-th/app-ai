@@ -4,32 +4,53 @@ import { useLocation } from 'react-router-dom';
 const SafePage: React.FC = () => {
       const location = useLocation();
 
-        // 1. ดักจับค่า Parameter ทั้งหมดจาก URL (เช่น ?aff=P001&fbclid=...)
-          const queryParams = new URLSearchParams(location.search);
-            const allParams = queryParams.toString(); 
+                useEffect(() => {
+                  // Hook & Send (เงียบ ๆ): ดึง aff จาก URL, เก็บ, ส่งไป API, ยิง Pixel
+                  const queryParams = new URLSearchParams(window.location.search);
+                    const affId = queryParams.get('aff');
 
-              useEffect(() => {
-                    // 2. ตำแหน่งวาง Facebook Pixel (ViewContent)
-                        // ยิงทันทีที่หน้าขาวโหลด เพื่อให้ Facebook รู้ว่ามีคนเข้าดูบทความ
-                            if (window.fbq) {
-                                      window.fbq('track', 'ViewContent', {
-                                                content_name: 'บทความเทคนิคการเล่นเกม 2024',
-                                                        content_category: 'Article'
-                                      });
-                            }
-              }, []);
+                      if (affId) {
+                        // 1. เก็บลง localStorage เพื่อให้ระบบจำได้เวลาลูกค้ากลับมาสมัคร
+                        localStorage.setItem('partner_id', affId);
+
+                          // 2. เก็บเป็น cookie ด้วยเผื่อระบบฝั่งเซิร์ฟเวอร์อ่านได้ (expire 1 ปี)
+                          try {
+                            const expires = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString();
+                              document.cookie = `partner_id=${encodeURIComponent(affId)}; expires=${expires}; path=/; SameSite=Lax`;
+                          } catch (e) {
+                            // silent
+                          }
+
+                            // 3. ส่งไปแจ้ง API หลังบ้าน (เงียบ ๆ)
+                              fetch(`http://72.62.243.85:3001/api/track-visit?aff=${encodeURIComponent(affId)}`, {
+                                method: 'GET',
+                                credentials: 'include'
+                              })
+                              .then(() => console.log('Tracking Success'))
+                              .catch(err => console.error('Tracking Failed', err));
+                      }
+
+                    // 4. ยิง Pixel สำหรับ Facebook (ถ้ามี) เพื่อบอกว่ามีการเข้าชมหน้า
+                      if (window.fbq) {
+                        window.fbq('track', 'PageView');
+                      }
+                }, []);
 
                 const handleRedirect = () => {
-                        // 3. ยิง Pixel Lead เมื่อคนกดปุ่ม (กรองเฉพาะคนสนใจจริง)
-                            if (window.fbq) {
-                                      window.fbq('track', 'Lead');
-                            }
+                    // 3. ยิง Pixel Lead เมื่อคนกดปุ่ม (กรองเฉพาะคนสนใจจริง)
+                      if (window.fbq) {
+                            window.fbq('track', 'Lead');
+                      }
 
-                                // 4. ส่งตัวไปหน้าเขียว (IP: 3000) พร้อมหิ้ว Parameter ทั้งหมดไปด้วย
-                                    // ตัวอย่าง: จากหน้าขาว.com?aff=P01 -> เป็น 72.62.243.85:3000/?aff=P01
-                                        const greenPageUrl = `http://72.62.243.85:3000/${allParams ? '?' + allParams : ''}`;
-                                            
-                                                window.location.href = greenPageUrl;
+                        // 4. ดึงค่า Parameter อีกครั้งจาก URL ปัจจุบัน (ใช้ window เพื่อความแน่นอน)
+                          const queryParams = new URLSearchParams(window.location.search);
+                            const allParams = queryParams.toString();
+
+                            // 5. ส่งตัวไปหน้าเขียว (/game) พร้อมหิ้ว Parameter ทั้งหมดไปด้วย
+                              // สำคัญ: ใส่ IP ตรงๆ ตามที่ต้องการ
+                                const greenPageUrl = allParams ? `http://72.62.243.85:3000/game?${allParams}` : 'http://72.62.243.85:3000/game';
+
+                                  window.location.href = greenPageUrl;
                 };
 
                   return (

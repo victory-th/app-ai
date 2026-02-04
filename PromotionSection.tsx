@@ -63,7 +63,7 @@ const PromotionSection: React.FC = () => {
                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_#3b82f6]" />
                <div className="text-[8px] text-blue-500/50 font-mono tracking-widest uppercase">FB_PIXEL_CAPI_ACTIVE</div>
             </div>
-            <div className="text-[7px] text-white/10 font-mono">ID: 2072787790188101</div>
+            <div className="text-[7px] text-white/10 font-mono">ID: 1643574053295392</div>
           </div>
         </div>
 

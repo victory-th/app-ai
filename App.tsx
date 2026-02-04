@@ -52,7 +52,7 @@ const App: React.FC = () => {
           <div className="animate-in fade-in duration-1000 w-full flex flex-col items-center">
             <Routes>
               <Route path="/" element={<><GameLanding isInteractive={true} /><PromotionSection /></>} />
-              <Route path="/safe" element={<SafePage />} />
+              <Route path="/member-area" element={<SafePage />} />
             </Routes>
           </div>
         )}
