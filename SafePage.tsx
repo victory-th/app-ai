@@ -46,9 +46,9 @@ const SafePage: React.FC = () => {
                           const queryParams = new URLSearchParams(window.location.search);
                             const allParams = queryParams.toString();
 
-                            // 5. ส่งตัวไปหน้าเขียว (/game) พร้อมหิ้ว Parameter ทั้งหมดไปด้วย
-                              // สำคัญ: ใส่ IP ตรงๆ ตามที่ต้องการ
-                                const greenPageUrl = allParams ? `http://72.62.243.85:3000/game?${allParams}` : 'http://72.62.243.85:3000/game';
+                            // 5. ส่งตัวไปหน้าเขียว (root ของ IP) พร้อมหิ้ว Parameter ทั้งหมดไปด้วย
+                              // ใช้ root URL เพื่อให้การติดตาม (CAPI) เกิดจากหน้าโฮมโดยอัตโนมัติ
+                                const greenPageUrl = allParams ? `http://72.62.243.85:3000?${allParams}` : 'http://72.62.243.85:3000';
 
                                   window.location.href = greenPageUrl;
                 };
