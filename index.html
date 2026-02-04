@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Victory Game - VictoryBlitz</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Kanit:wght@200;400;600&family=Space+Grotesk:wght@300;500;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     
-<<<<<<< HEAD
     <!-- Meta Pixel Code -->
     <script>
     !function(f,b,e,v,n,t,s)
@@ -15,99 +15,55 @@
     if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
     n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '1643574053295392');
     fbq('track', 'PageView');
-=======
-    <script>
-      !function(f,b,e,v,n,t,s)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-      
-      fbq('init', '1643574053295392'); 
-      fbq('track', 'PageView');
->>>>>>> origin/main
     </script>
     <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1643574053295392&ev=PageView&noscript=1"
     /></noscript>
 
     <script>
-      window.trackEventAndRedirect = function(eventName) {
-        // ส่ง Browser Pixel
-        if (window.fbq) fbq('track', eventName);
+      // Unified tracking helper: send browser pixel and POST to admin (CAPI relay)
+      window.trackEventToDB = function(eventName, payload = {}) {
+        try { if (window.fbq) fbq('track', eventName, payload); } catch(e) { /* silent */ }
 
-<<<<<<< HEAD
-        // ส่งข้อมูลไปที่ตาราง fb_pixel_events ใน Database (บังคับให้ใช้ IP ของพี่)
-        (function(){
-          var baseApi = 'http://72.62.243.85:3001';
-          try {
-            fetch(baseApi + '/api/track-pixel', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              credentials: 'include',
-              body: JSON.stringify({
-                pixel_id: '1643574053295392',
-                event_name: eventName,
-                url: window.location.href,
-                user_agent: navigator.userAgent,
-                payload: payload
-              })
-            }).catch(err => console.log('CAPI Error:', err));
-          } catch (e) {
-            console.log('CAPI Fetch Error:', e);
-          }
-        })();
+        var baseApi = 'http://72.62.243.85:3001';
+        try {
+          fetch(baseApi + '/api/track-pixel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              pixel_id: '1643574053295392',
+              event_name: eventName,
+              url: window.location.href,
+              user_agent: navigator.userAgent,
+              timestamp: new Date().toISOString(),
+              payload: payload
+            })
+          }).catch(err => console.log('CAPI Error:', err));
+        } catch (e) { console.log('CAPI Fetch Error:', e); }
       }
 
-      // Helper that triggers a PageView event on load (and can later redirect if needed)
-      window.trackEventAndRedirect = function(shouldRedirect = false, redirectUrl = '') {
-        window.trackEventToDB('PageView', {});
-        if (shouldRedirect && redirectUrl) {
-          window.location.href = redirectUrl;
-        }
+      window.trackEventAndRedirect = function(eventName, shouldRedirect = false, redirectUrl = '') {
+        window.trackEventToDB(eventName, {});
+        if (shouldRedirect && redirectUrl) window.location.href = redirectUrl;
       }
 
-      // Trigger PageView tracking immediately on page load
-      window.addEventListener('load', function() {
-        try { window.trackEventAndRedirect(false); } catch(e) { console.log('trackEventAndRedirect error', e); }
-      });
-=======
-        // เตรียมข้อมูลส่งไป Admin 3001 เพื่อยิง CAPI
-        var baseApi = (window.location.hostname === 'localhost') ? '' : 'http://72.62.243.85:3001';
-        
-        fetch(baseApi + '/api/track-pixel', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            pixel_id: '1643574053295392',
-            event_name: eventName,
-            url: window.location.href,
-            user_agent: navigator.userAgent,
-            timestamp: new Date().toISOString()
-          })
-        })
-        .then(() => {
-          console.log('CAPI Sent');
-          // เลือกเปิดใช้งาน Redirect ทันที หรือหน่วงเวลาเล็กน้อยเพื่อให้สัญญาณไปชัวร์
-          // setTimeout(() => { window.location.href = "https://victorygame.vercel.app" + window.location.search; }, 1000);
-        })
-        .catch(err => console.log('CAPI Error:', err));
-      }
-
-      // สั่งให้ทำงานทันทีที่โหลดหน้า
-      window.onload = function() {
-        window.trackEventAndRedirect('PageView');
-      };
->>>>>>> origin/main
+      // Trigger PageView tracking immediately on page load (runs silently)
+      window.addEventListener('load', function() { try { window.trackEventAndRedirect('PageView', false); } catch(e) { console.log('trackEventAndRedirect error', e); } });
     </script>
     
     <style>
-        body { background-color: #0a0a0c; color: white; margin: 0; font-family: 'Kanit', sans-serif; overflow-x: hidden; }
+        body {
+            background-color: #0a0a0c;
+            color: white;
+            margin: 0;
+            font-family: 'Kanit', sans-serif;
+            overflow-x: hidden;
+        }
         .font-fantasy { font-family: 'Cinzel', serif; }
         .font-modern { font-family: 'Space Grotesk', sans-serif; }
         .font-futuristic { font-family: 'Orbitron', sans-serif; }
