@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Victory Game - VictoryBlitz</title>
+    <meta name="google-site-verification" content="tWhSAFT5f5piPt_UNXnNvtF5fWb4-ROgRdEGCssZ9uA" />
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M293WSW90E"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      // รวม Config สำหรับ Analytics และ Ads ไว้ที่เดียว ไม่ต้องโหลดซ้ำ
+      gtag('config', 'G-M293WSW90E');
+      gtag('config', 'AW-17917237766');
+
+      // Function สำหรับส่ง Conversion เมื่อมีการคลิกหรือสมัคร
+      function gtag_report_conversion(url) {
+        var callback = function () {
+          if (typeof(url) != 'undefined') { window.location = url; }
+        };
+        gtag('event', 'conversion', {
+            'send_to': 'AW-17917237766/_zwiCJDVqoMcEIa0zd9C',
+            'value': 1.0,
+            'currency': 'THB',
+            'event_callback': callback
+        });
+        return false;
+      }
+    </script>
+
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1643574053295392');
+    fbq('track', 'PageView');
+
+    // Unified tracking helper: Facebook Browser Pixel + CAPI Relay
+    window.trackEventToDB = function(eventName, payload = {}) {
+      try { if (window.fbq) fbq('track', eventName, payload); } catch(e) {}
+      
+      var baseApi = 'http://72.62.243.85:3001';
+      fetch(baseApi + '/api/track-pixel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pixel_id: '1643574053295392',
+          event_name: eventName,
+          url: window.location.href,
+          user_agent: navigator.userAgent,
+          timestamp: new Date().toISOString(),
+          payload: payload
+        })
+      }).catch(err => console.log('CAPI Error:', err));
+    }
+
+    window.trackEventAndRedirect = function(eventName, shouldRedirect = false, redirectUrl = '') {
+      window.trackEventToDB(eventName, {});
+      if (shouldRedirect && redirectUrl) window.location.href = redirectUrl;
+    }
+
+    // Trigger PageView tracking on load
+    window.addEventListener('load', function() { 
+      try { window.trackEventAndRedirect('PageView', false); } catch(e) {} 
+    });
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Kanit:wght@200;400;600&family=Space+Grotesk:wght@300;500;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/index.css">
+    
+    <style>
+        body { background-color: #0a0a0c; color: white; margin: 0; font-family: 'Kanit', sans-serif; overflow-x: hidden; }
+        .font-fantasy { font-family: 'Cinzel', serif; }
+        .font-modern { font-family: 'Space Grotesk', sans-serif; }
+        .font-futuristic { font-family: 'Orbitron', sans-serif; }
+        .glow-text { text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+        .glass-panel { background: rgba(25, 25, 30, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0c; }
+        ::-webkit-scrollbar-thumb { background: #252529; border-radius: 10px; }
+    </style>
+
+
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@^19.2.4",
+        "react-dom": "https://esm.sh/react-dom@^19.2.4"
+      }
+    }
+    </script>
+  <script type="module" crossorigin src="/assets/index-CgE_xCWJ.js"></script>
+</head>
+<body>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1643574053295392&ev=PageView&noscript=1"/></noscript>
+    
+    <div id="root"></div>
+    
+</body>
+</html>
