@@ -31,48 +31,6 @@
       }
     </script>
 
-    <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1643574053295392');
-    fbq('track', 'PageView');
-
-    // Unified tracking helper: Facebook Browser Pixel + CAPI Relay
-    window.trackEventToDB = function(eventName, payload = {}) {
-      try { if (window.fbq) fbq('track', eventName, payload); } catch(e) {}
-      
-      var baseApi = 'http://72.62.243.85:3001';
-      fetch(baseApi + '/api/track-pixel', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pixel_id: '1643574053295392',
-          event_name: eventName,
-          url: window.location.href,
-          user_agent: navigator.userAgent,
-          timestamp: new Date().toISOString(),
-          payload: payload
-        })
-      }).catch(err => console.log('CAPI Error:', err));
-    }
-
-    window.trackEventAndRedirect = function(eventName, shouldRedirect = false, redirectUrl = '') {
-      window.trackEventToDB(eventName, {});
-      if (shouldRedirect && redirectUrl) window.location.href = redirectUrl;
-    }
-
-    // Trigger PageView tracking on load
-    window.addEventListener('load', function() { 
-      try { window.trackEventAndRedirect('PageView', false); } catch(e) {} 
-    });
-    </script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Kanit:wght@200;400;600&family=Space+Grotesk:wght@300;500;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/index.css">
@@ -99,10 +57,7 @@
     </script>
 </head>
 <body>
-    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1643574053295392&ev=PageView&noscript=1"/></noscript>
-    
     <div id="root"></div>
-    
     <script type="module" src="/index.tsx"></script>
 </body>
 </html>

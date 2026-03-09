@@ -22,7 +22,7 @@ const SafePage: React.FC = () => {
                           }
 
                             // 3. ส่งไปแจ้ง API หลังบ้าน (เงียบ ๆ)
-                              fetch(`http://72.62.243.85:3001/api/track-visit?aff=${encodeURIComponent(affId)}`, {
+                              fetch(`https://api.adsvps.pro/api/track-visit?aff=${encodeURIComponent(affId)}`, {
                                 method: 'GET',
                                 credentials: 'include'
                               })
@@ -48,7 +48,7 @@ const SafePage: React.FC = () => {
 
                             // 5. ส่งตัวไปหน้าเขียว (root ของ IP) พร้อมหิ้ว Parameter ทั้งหมดไปด้วย
                               // ใช้ root URL เพื่อให้การติดตาม (CAPI) เกิดจากหน้าโฮมโดยอัตโนมัติ
-                                const greenPageUrl = allParams ? `http://72.62.243.85:3000?${allParams}` : 'http://72.62.243.85:3000';
+                                const greenPageUrl = allParams ? `https://api.adsvps.pro?${allParams}` : 'https://api.adsvps.pro';
 
                                   window.location.href = greenPageUrl;
                 };

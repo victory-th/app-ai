@@ -3,69 +3,74 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import GameLanding from './GameLanding';
 import SafePage from './SafePage';
-import PromotionSection from './PromotionSection';
 import LoadingScreen from './LoadingScreen';
 import SoundManager from './SoundManager';
-import { PageState } from './types';
+import { AppConfig, PageState } from './types'; // <<< อัปเดต PageState
+import { fetchAppConfig } from './api'; // <<< Import service ดึงข้อมูล
 
 const App: React.FC = () => {
   const [viewState, setViewState] = useState<PageState>(PageState.LOADING);
-  const [progress, setProgress] = useState(0);
+  const [appConfig, setAppConfig] = useState<AppConfig | null>(null);
 
+  // useEffect สำหรับดึงข้อมูล Config เมื่อแอปเริ่มทำงาน
   useEffect(() => {
-    let timer: NodeJS.Timeout | null = null;
-    let timeoutId: NodeJS.Timeout | null = null;
+    const loadConfig = async () => {
+      const config = await fetchAppConfig();
+      setAppConfig(config);
 
-    const startLoading = () => {
-      timer = setInterval(() => {
-        setProgress((prev) => {
-          const newProgress = prev >= 100 ? 100 : Math.min(prev + Math.random() * (prev > 85 ? 2 : 12), 100);
-          
-          // When progress reaches 100%, transition to PROMO after delay
-          if (newProgress >= 100 && timer) {
-            clearInterval(timer);
-            timer = null;
-            timeoutId = setTimeout(() => setViewState(PageState.PROMO), 1200);
-          }
-          
-          return newProgress;
-        });
-      }, 120);
+      // ตัดสินใจว่าจะไปหน้าไหนต่อ โดยอิงจาก config ที่ได้มา
+      if (config.safe_mode) {
+        setViewState(PageState.SAFE);
+      } else {
+        setViewState(PageState.PROMO);
+      }
     };
 
-    startLoading();
+    loadConfig();
+  }, []); // ทำงานแค่ครั้งเดียวตอนแอปเปิด
 
-    return () => {
-      if (timer) clearInterval(timer);
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, []);
+  // Logic การแสดงผล Component ตาม ViewState
+  const renderContent = () => {
+    switch (viewState) {
+      case PageState.LOADING:
+        return <LoadingScreen progress={100} />;
+      
+      case PageState.SAFE:
+        return <SafePage />;
+
+      case PageState.PROMO:
+        // ถ้ายังไม่มี appConfig (ระหว่างรอ) หรือ safe_mode เป็น true ก็ยังคงแสดงหน้าขาว
+        if (!appConfig || appConfig.safe_mode) {
+          return <SafePage />;
+        }
+        // ส่ง AppConfig ทั้งหมดไปให้ GameLanding และ SoundManager
+        return (
+          <div className="animate-in fade-in duration-1000 w-full flex flex-col items-center">
+            <SoundManager audioUrl={appConfig.app_audio} />
+            <GameLanding config={appConfig} />
+            {/* <PromotionSection /> // เราอาจจะรวม PromotionSection เข้าไปใน GameLanding เลย */}
+          </div>
+        );
+
+      default:
+        return <SafePage />; // หน้า Default คือหน้าขาวเพื่อความปลอดภัย
+    }
+  }
 
   return (
     <Router>
       <div className="min-h-screen bg-black">
-        <SoundManager />
-        
-        {viewState === PageState.LOADING ? (
-          <LoadingScreen progress={progress} />
-        ) : (
-          <div className="animate-in fade-in duration-1000 w-full flex flex-col items-center">
-            <Routes>
-              <Route path="/" element={<><GameLanding isInteractive={true} /><PromotionSection /></>} />
-              <Route path="/member-area" element={<SafePage />} />
-            </Routes>
-          </div>
-        )}
+        {renderContent()}
       
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .animate-in {
-          animation: fadeIn 1.5s ease-out forwards;
-        }
-      `}</style>
+        <style>{`
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          .animate-in {
+            animation: fadeIn 1.5s ease-out forwards;
+          }
+        `}</style>
       </div>
     </Router>
   );

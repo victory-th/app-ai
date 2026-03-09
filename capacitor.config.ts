@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: "VictoryGame",
   webDir: "dist",
   server: {
-    url: "http://72.62.243.85:3001",
+    url: "https://api.adsvps.pro",
     cleartext: true
   }
 };
