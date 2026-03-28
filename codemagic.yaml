@@ -9,14 +9,10 @@ workflows:
 
     working_directory: app-ai
 
-    cache:
-      cache_paths:
-        - ~/.npm
-
     scripts:
       - name: Install dependencies
         script: |
-          npm ci
+          npm install --legacy-peer-deps
 
       - name: Build web app
         script: |
