@@ -7,6 +7,8 @@ workflows:
       node: 22.14.0
       java: 17
 
+    working_directory: app-ai
+
     cache:
       cache_paths:
         - ~/.npm
@@ -14,29 +16,24 @@ workflows:
     scripts:
       - name: Install dependencies
         script: |
-          pwd
-          ls -la
-          cd app-ai
-          pwd
-          ls -la
-          node -v
-          npm -v
-          cat package.json
-          npm ci --verbose
+          npm ci
 
       - name: Build web app
         script: |
-          cd app-ai
           npm run build
 
       - name: Sync Capacitor Android project
         script: |
-          cd app-ai
           npx cap sync android
+
+      - name: Set Android SDK location
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
 
       - name: Build debug APK
         script: |
-          cd app-ai/android
+          cd android
+          chmod +x gradlew
           ./gradlew assembleDebug --stacktrace
 
     artifacts:
