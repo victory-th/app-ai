@@ -2,12 +2,21 @@ workflows:
   capacitor-android-apk:
     name: Capacitor Android APK
     max_build_duration: 60
+
+    environment:
+      node: 22.14.0
+      java: 17
+
     working_directory: app-ai
+
+    cache:
+      cache_paths:
+        - ~/.npm
 
     scripts:
       - name: Install dependencies
         script: |
-          npm install
+          npm ci
 
       - name: Build web app
         script: |
