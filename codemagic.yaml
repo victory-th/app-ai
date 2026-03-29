@@ -7,8 +7,6 @@ workflows:
       node: 22.14.0
       java: 17
 
-    working_directory: app-ai
-
     scripts:
       - name: Install dependencies
         script: |
@@ -33,4 +31,4 @@ workflows:
           ./gradlew assembleDebug --stacktrace
 
     artifacts:
-      - app-ai/android/app/build/outputs/**/*.apk
+      - android/app/build/outputs/**/*.apk
