@@ -4,7 +4,7 @@ workflows:
     max_build_duration: 60
 
     environment:
-      ubuntu: 24.04
+      xcode: 26.2
       node: 22.14.0
       java: 21
 
@@ -21,9 +21,9 @@ workflows:
         script: |
           npx cap sync android
 
-      - name: Force Java 21
+      - name: Force Java 21 on macOS
         script: |
-          export JAVA_HOME=/usr/lib/jvm/java-1.21.0-openjdk-amd64
+          export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-21.jdk/Contents/Home
           export PATH=$JAVA_HOME/bin:$PATH
           java -version
           javac -version
@@ -34,7 +34,7 @@ workflows:
 
       - name: Build debug APK
         script: |
-          export JAVA_HOME=/usr/lib/jvm/java-1.21.0-openjdk-amd64
+          export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-21.jdk/Contents/Home
           export PATH=$JAVA_HOME/bin:$PATH
           cd android
           chmod +x gradlew
