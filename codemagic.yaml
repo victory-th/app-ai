@@ -1,9 +1,11 @@
 workflows:
   capacitor-android-apk:
     name: Capacitor Android APK
+    instance_type: linux_x2
     max_build_duration: 60
 
     environment:
+      ubuntu: 24.04
       node: 22.14.0
       java: 21
 
@@ -20,12 +22,21 @@ workflows:
         script: |
           npx cap sync android
 
+      - name: Set Java 21 explicitly
+        script: |
+          export JAVA_HOME=/usr/lib/jvm/java-1.21.0-openjdk-amd64
+          export PATH=$JAVA_HOME/bin:$PATH
+          java -version
+          javac -version
+
       - name: Set Android SDK location
         script: |
           echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
 
       - name: Build debug APK
         script: |
+          export JAVA_HOME=/usr/lib/jvm/java-1.21.0-openjdk-amd64
+          export PATH=$JAVA_HOME/bin:$PATH
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug --stacktrace
